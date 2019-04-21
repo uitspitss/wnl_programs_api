@@ -1,0 +1,25 @@
+[[source]]
+name = "pypi"
+url = "https://pypi.org/simple"
+verify_ssl = true
+
+[dev-packages]
+flake8 = "*"
+mypy = "*"
+pytest = "*"
+black = "==18.9b0"
+ipython = "*"
+requests-file = "*"
+flask = "*"
+pytest-mock = "*"
+freezegun = "*"
+
+[packages]
+requests-html = "*"
+google-cloud-storage = "*"
+
+[requires]
+python_version = "3.7"
+
+[pipenv]
+allow_prereleases = true
