@@ -3,13 +3,15 @@ import re
 import json
 from pathlib import Path
 from datetime import datetime, timezone, timedelta
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_file
 from google.cloud import storage
 from requests_html import AsyncHTMLSession
 
 
 CLOUD_STORAGE_BUCKET = os.environ.get('CLOUD_STORAGE_BUCKET')
 CACHE_FILENAME = 'programs_cache.json'
+SS_FILENAME = 'programs_ss.png'
+SS_FILEPATH = f'/tmp/{SS_FILENAME}'
 
 URL = 'https://weathernews.jp/s/topics/solive24.html'
 JST = timezone(timedelta(hours=+9), 'JST')
@@ -46,7 +48,13 @@ def _fetch_wni():
 
     async def _fetch():
         r = await asession.get(URL)
-        await r.html.arender(sleep=5)
+        await r.html.arender(
+            sleep=5,
+            keep_page=True,
+            scrolldown=True,
+            script="document.getElementsByClassName('mdl-card__media')[0].remove();document.getElementById('snsTop').remove();",
+        )
+        await r.html.page.screenshot({'path': SS_FILEPATH})
         return r
 
     r = asession.run(_fetch)[0]
@@ -135,6 +143,13 @@ def _get_programs_from_cache():
     return json.loads(text)
 
 
+def _get_programs_ss_from_cache():
+    bucket = _get_bucket()
+    blob = bucket.get_blob(SS_FILENAME)
+    blob.download_to_filename(SS_FILEPATH)
+    return SS_FILEPATH
+
+
 def update_programs_cache(request):
     programs = _get_programs()
     converted = _convert_dt(programs, to_str=True)
@@ -142,6 +157,9 @@ def update_programs_cache(request):
     bucket = _get_bucket()
     blob = bucket.blob(CACHE_FILENAME)
     blob.upload_from_string(json.dumps(converted), content_type='text/json')
+
+    blob = bucket.blob(SS_FILENAME)
+    blob.upload_from_filename(SS_FILEPATH)
 
     return jsonify(programs) if request else programs
 
@@ -157,6 +175,9 @@ def programs_api(request):
 
     if fmt == 'slack':
         formatted = _format_slack(programs)
+    elif fmt == 'image':
+        fp = _get_programs_ss_from_cache()
+        return send_file(fp, mimetype='image/png')
     else:
         formatted = _convert_dt(programs, to_str=True)
 
