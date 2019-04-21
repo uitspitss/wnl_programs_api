@@ -1,13 +1,11 @@
 import pytest
 import os
 import json
-import datetime
 import freezegun
 from requests_html import HTMLSession
 from requests_file import FileAdapter
 
-
-from src.main import get_programs
+from src.main import _get_programs
 
 
 session = HTMLSession()
@@ -25,13 +23,13 @@ def get():
     return session.get(url)
 
 
-@freezegun.freeze_time('2019-04-16 21:00:00')
+@freezegun.freeze_time('2019-04-16 21:00:00+0900')
 def test_get_programs(mocker, programs):
     mocker.patch('src.main._fetch_wni', return_value=get().html)
-    _programs = get_programs()
+    _programs = _get_programs()
     for _p, expected in zip(_programs, programs):
         assert _p['caster'] == expected['caster']
         assert _p['title'] == expected['title']
-        assert _p['start_dt'].strftime('%Y%m%d%H%M%S') == expected['start_dt'].strftime(
-            '%Y%m%d%H%M%S'
-        )
+        assert _p['start_dt'].strftime('%Y-%m-%d %H:%M:%S') == expected[
+            'start_dt'
+        ].strftime('%Y-%m-%d %H:%M:%S')

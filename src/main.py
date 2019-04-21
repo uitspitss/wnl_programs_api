@@ -75,8 +75,12 @@ def _get_programs() -> list:
         caster_jpg = tr.xpath('//td[@class="tt_thumb"]/img')[0].attrs['src']
         caster_text = re.search(r'/([a-z]+?)((\d)*_\w+)*.jpg$$', caster_jpg)[1]
 
+        if dt_h == 23 and caster_text == 'noimage':
+            caster_text = 'airi'
+
         if _dt_h > dt_h:
             now += timedelta(days=1)
+
         programs.append(
             {
                 'start_dt': datetime(
@@ -185,5 +189,5 @@ def programs_api(request):
 
 
 if __name__ == "__main__":
-    # print(update_programs_cache(None))
-    print(programs_api(None))
+    print(update_programs_cache(None))
+    # print(programs_api(None))
