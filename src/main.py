@@ -51,7 +51,7 @@ def _fetch_wni():
         await r.html.arender(
             sleep=5,
             keep_page=True,
-            script="document.getElementsByTagName('header')[0].remove();",
+            script="document.getElementsByTagName('header')[0].remove();document.querySelector('p.pan').remove();",
         )
         clip = await r.html.page.evaluate(
             '''() => {
