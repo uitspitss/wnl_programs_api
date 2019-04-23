@@ -13,7 +13,7 @@ CACHE_FILENAME = 'programs_cache.json'
 SS_FILENAME = 'programs_ss.png'
 SS_FILEPATH = f'/tmp/{SS_FILENAME}'
 
-URL = 'https://weathernews.jp/s/topics/solive24.html'
+URL = 'https://weathernews.jp/s/solive24/timetable.html'
 JST = timezone(timedelta(hours=+9), 'JST')
 CASTER = {
     'noimage': '無人',
@@ -51,10 +51,20 @@ def _fetch_wni():
         await r.html.arender(
             sleep=5,
             keep_page=True,
-            scrolldown=True,
-            script="document.getElementsByClassName('mdl-card__media')[0].remove();document.getElementById('snsTop').remove();",
+            script="document.getElementsByTagName('header')[0].remove();",
         )
-        await r.html.page.screenshot({'path': SS_FILEPATH})
+        clip = await r.html.page.evaluate(
+            '''() => {
+                const rect = document.getElementById('main').getBoundingClientRect();
+                return {
+                    x: 0,
+                    y: 0,
+                    width: rect.width,
+                    height: rect.height
+                };
+            }'''
+        )
+        await r.html.page.screenshot({'path': SS_FILEPATH, 'clip': clip})
         return r
 
     r = asession.run(_fetch)[0]
@@ -67,12 +77,12 @@ def _get_programs() -> list:
 
     _dt_h = 0
     html = _fetch_wni()
-    for tr in html.xpath('//table[@class="solive24_timetable_table"]/tbody/tr'):
-        dt_text = tr.xpath('//td[@class="tt_hour"]')[0].text
+    for li in html.xpath('//article[@id="main"]/section/ul/li'):
+        dt_text = li.xpath('//span[@class="time"]')[0].text
         dt_h, _ = [int(x) for x in dt_text.split(':')]
-        title = tr.xpath('//td[@class="tt_program"]')[0].text
+        title = li.xpath('//span[@class="title"]')[0].text
         title = re.search(r'[\w・]+', title)[0]
-        caster_jpg = tr.xpath('//td[@class="tt_thumb"]/img')[0].attrs['src']
+        caster_jpg = li.xpath('//span[@class="caster"]/img')[0].attrs['src']
         caster_text = re.search(r'/([a-z]+?)((\d)*_\w+)*.jpg$$', caster_jpg)[1]
 
         if dt_h == 23 and caster_text == 'noimage':
