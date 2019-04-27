@@ -8,6 +8,7 @@ from google.cloud import storage
 from requests_html import AsyncHTMLSession
 
 
+API_KEY = os.environ.get('API_KEY')
 CLOUD_STORAGE_BUCKET = os.environ.get('CLOUD_STORAGE_BUCKET')
 CACHE_FILENAME = 'programs_cache.json'
 SS_FILENAME = 'programs_ss.png'
@@ -165,17 +166,23 @@ def _get_programs_ss_from_cache():
 
 
 def update_programs_cache(request):
-    programs = _get_programs()
-    converted = _convert_dt(programs, to_str=True)
+    if request is None or (
+        request.method == 'POST'
+        and json.loads(request.data.decode('utf-8')).get('API_KEY') == API_KEY
+    ):
+        programs = _get_programs()
+        converted = _convert_dt(programs, to_str=True)
 
-    bucket = _get_bucket()
-    blob = bucket.blob(CACHE_FILENAME)
-    blob.upload_from_string(json.dumps(converted), content_type='text/json')
+        bucket = _get_bucket()
+        blob = bucket.blob(CACHE_FILENAME)
+        blob.upload_from_string(json.dumps(converted), content_type='text/json')
 
-    blob = bucket.blob(SS_FILENAME)
-    blob.upload_from_filename(SS_FILEPATH)
+        blob = bucket.blob(SS_FILENAME)
+        blob.upload_from_filename(SS_FILEPATH)
 
-    return jsonify(programs) if request else programs
+        return jsonify(programs) if request else programs
+
+    return 'Not Available!'
 
 
 def programs_api(request):
