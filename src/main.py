@@ -121,14 +121,7 @@ def _convert_dt(programs: list, to_str=True) -> list:
 
 def _format_slack(programs: list) -> dict:
     template_dict = {
-        "attachments": [
-            {
-                "color": "",
-                "title": f"今後の放送予定",
-                "title_link": "https://weathernews.jp/s/topics/solive24.html",
-                "ts": 0,
-            }
-        ]
+        "attachments": [{"color": "", "title": f"今後の放送予定", "title_link": URL, "ts": 0}]
     }
 
     colors = COLORS[: len(programs)]
