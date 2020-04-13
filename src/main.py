@@ -29,6 +29,8 @@ CASTER = {
     'hiyama': '檜山沙耶（さやっち）',
     'komaki': '駒木結衣（ゆいちゃん）',
     'airi': 'ウェザーロイド Airi',
+    'yuki': '内田侑希',
+    'ayame': '武藤彩芽',
 }
 COLORS = [
     '#26294a',
