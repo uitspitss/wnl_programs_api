@@ -1,34 +1,37 @@
--i https://pypi.org/simple
-appdirs==1.4.3
-beautifulsoup4==4.7.1
+-i https://pypi.org/simple/
+appdirs==1.4.4
+beautifulsoup4==4.9.3
 bs4==0.0.1
-cachetools==3.1.0
-certifi==2019.3.9
-chardet==3.0.4
-cssselect==1.0.3
+cachetools==4.2.0
+certifi==2020.12.5
+cffi==1.14.4
+chardet==4.0.0
+cssselect==1.1.0
 fake-useragent==0.1.11
-google-api-core==1.9.0
-google-auth==1.6.3
+google-api-core==1.24.1
+google-auth==1.24.0
 google-cloud-core==0.29.1
 google-cloud-storage==1.15.0
-google-resumable-media==0.3.2
-googleapis-common-protos==1.6.0b9
-idna==2.8
-lxml==4.3.3
-parse==1.12.0
-protobuf==3.7.1
-pyasn1-modules==0.2.4
-pyasn1==0.4.5
-pyee==6.0.0
-pyppeteer==0.0.25
-pyquery==1.4.0
-pytz==2019.1
+google-crc32c==1.1.0 ; python_version >= '3.5'
+google-resumable-media==1.2.0
+googleapis-common-protos==1.52.0
+idna==2.10
+lxml==4.6.2
+parse==1.18.0
+protobuf==4.0.0rc2
+pyasn1-modules==0.2.8
+pyasn1==0.4.8
+pycparser==2.20
+pyee==8.1.0
+pyppeteer==0.2.4
+pyquery==1.4.3
+pytz==2020.5
 requests-html==0.10.0
-requests==2.21.0
-rsa==4.0
-six==1.12.0
-soupsieve==1.9.1
-tqdm==4.31.1
-urllib3==1.24.2
-w3lib==1.20.0
-websockets==7.0
+requests==2.25.1
+rsa==4.6 ; python_version >= '3.6'
+six==1.15.0
+soupsieve==2.1 ; python_version >= '3.0'
+tqdm==4.55.1
+urllib3==1.26.2
+w3lib==1.22.0
+websockets==8.1
